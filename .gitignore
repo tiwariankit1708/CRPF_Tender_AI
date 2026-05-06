@@ -13,8 +13,9 @@ env/
 # Environment
 .env
 
-# Storage (runtime data)
-storage/
+# Storage (runtime data — keep folder structure via .gitkeep)
+storage/**
+!storage/**/.gitkeep
 
 # Node
 node_modules/
