@@ -1,10 +1,10 @@
 # CRPF Tender AI
 
-Multi-agent AI system for government procurement tender evaluation.
+An end-to-end multi-agent AI system that automates government procurement tender evaluation — from PDF ingestion to audit-ready reports.
 
 ## Architecture
 
-Four AI agents work in a pipeline:
+Four specialised AI agents work in a sequential pipeline:
 1. **Agent A (Criteria)** — Extracts eligibility criteria from tender PDFs
 2. **Agent B (Parser)** — Extracts key facts from bidder documents
 3. **Agent C (Evaluator)** — Evaluates bids against criteria with clear verdicts
