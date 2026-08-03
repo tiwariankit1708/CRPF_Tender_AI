@@ -54,5 +54,16 @@ npm run dev
 | `/report/{tender_id}` | GET | Generate PDF report |
 | `/dashboard/{tender_id}` | GET | Get all dashboard data |
 
+## Tech Stack
+
+- **Backend:** Python · FastAPI · LangChain · OpenAI GPT-4
+- **Frontend:** React · Vite · Tailwind CSS
+- **PDF Processing:** Poppler · Tesseract OCR · pdf2image
+- **Reports:** ReportLab
+
+## Contributing
+
+Contributions are welcome! Please open an issue first to discuss proposed changes, then submit a pull request.
+
 ## License
 MIT
