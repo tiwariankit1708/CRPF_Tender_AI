@@ -33,6 +33,9 @@ from reportlab.lib.enums import TA_CENTER, TA_LEFT
 
 load_dotenv()
 
+# Track server start time for uptime calculation
+SERVER_START_TIME = datetime.utcnow()
+
 # ---------------------------------------------------------------------------
 # Logging
 # ---------------------------------------------------------------------------
@@ -56,10 +59,12 @@ for d in (TENDERS_DIR, BIDS_DIR, REPORTS_DIR):
 # ---------------------------------------------------------------------------
 # FastAPI App
 # ---------------------------------------------------------------------------
+APP_VERSION = "1.1.0"
+
 app = FastAPI(
     title="CRPF Tender AI",
     description="Multi-agent AI system for government procurement tender evaluation",
-    version="1.0.0",
+    version=APP_VERSION,
 )
 
 app.add_middleware(
@@ -565,4 +570,56 @@ async def submit_review(tender_id: str, bidder_id: str, decision: dict):
 # ---------------------------------------------------------------------------
 @app.get("/health")
 async def health_check():
-    return {"status": "healthy", "timestamp": datetime.utcnow().isoformat()}
+    """Return service health status with version and uptime information."""
+    now = datetime.utcnow()
+    uptime_seconds = int((now - SERVER_START_TIME).total_seconds())
+    hours, remainder = divmod(uptime_seconds, 3600)
+    minutes, seconds = divmod(remainder, 60)
+    return {
+        "status": "healthy",
+        "version": APP_VERSION,
+        "uptime": f"{hours}h {minutes}m {seconds}s",
+        "uptime_seconds": uptime_seconds,
+        "timestamp": now.isoformat(),
+    }
+
+
+# ---------------------------------------------------------------------------
+# GET /stats — System-wide statistics
+# ---------------------------------------------------------------------------
+@app.get("/stats")
+async def get_stats():
+    """Return system-wide statistics: total tenders, bids, evaluations, and audits."""
+    total_tenders = 0
+    total_bids = 0
+    total_evaluated = 0
+    total_audited = 0
+    total_reports = 0
+
+    if TENDERS_DIR.exists():
+        for td in TENDERS_DIR.iterdir():
+            if td.is_dir():
+                total_tenders += 1
+                if (td / "evaluations.json").exists():
+                    total_evaluated += 1
+                if (td / "audits.json").exists():
+                    total_audited += 1
+                if (td / "report.json").exists():
+                    total_reports += 1
+
+    if BIDS_DIR.exists():
+        for tender_bid_dir in BIDS_DIR.iterdir():
+            if tender_bid_dir.is_dir():
+                for bidder_dir in tender_bid_dir.iterdir():
+                    if bidder_dir.is_dir():
+                        total_bids += 1
+
+    return {
+        "total_tenders": total_tenders,
+        "total_bids": total_bids,
+        "total_evaluated": total_evaluated,
+        "total_audited": total_audited,
+        "total_reports_generated": total_reports,
+        "server_version": APP_VERSION,
+        "server_uptime_seconds": int((datetime.utcnow() - SERVER_START_TIME).total_seconds()),
+    }

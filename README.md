@@ -53,6 +53,8 @@ npm run dev
 | `/audit/{tender_id}` | GET | Audit evaluations, flag items |
 | `/report/{tender_id}` | GET | Generate PDF report |
 | `/dashboard/{tender_id}` | GET | Get all dashboard data |
+| `/stats` | GET | System-wide statistics (tenders, bids, evaluations) |
+| `/health` | GET | Health check with version and uptime info |
 
 ## Tech Stack
 
